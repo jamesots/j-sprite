@@ -1,5 +1,3 @@
-#summary j-Sprite Usage
-
 = Command Line Options =
 
 || *Shortcut* || *Full Option* || *Description* || *Default Value* ||
@@ -32,5 +30,15 @@
 || *Shortcut* || *Full Option* || *Description* || *Default Value* ||
 || -h || --html || generate a sample html file for the sprite || _N/A_ ||
 
+----
 
 = Examples =
+To run j-Sprite, you must first type `java -jar jsprite.jar`, followed by the paramters.  This has been left out of the examples below.
+
+|| *Flag and value* || *Meaning* ||
+|| -f "image1.png, image2.jpeg, image3.gif" || sprite the three images specified ||
+|| -d . || select all images in the current directory ||
+|| -d . -r || select all images in the current directory, search subdirectories ||
+|| -d . -r -n || select all images in the current directory, search subdirectories (even if hidden) ||
+|| -d c:\icons || select all images in the c:\icons directory ||
+|| -d c:\icons -g "^`[`a-m`]`.`*`\.png$" || select all images in the c:\icons directory that start with the letters a through m and end in .png ||
