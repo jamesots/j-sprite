@@ -83,7 +83,7 @@
 		<attribute name="build-artifact" value="${artifact.name}"/>
 		<attribute name="build-version" value="${buildVersion}"/>
                 <attribute name="build-time" value="${build.time}"/>
-                <attribute name="Main-Class" value="com.jdev.sprite.SpriteMain"/>
+                <attribute name="Main-Class" value="com.jdev.jsprite.SpriteMain"/>
 	</manifest>
     </jar>
   </target>
