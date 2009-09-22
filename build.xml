@@ -48,6 +48,7 @@
     <mkdir dir="${path.build-test}"/>
     <mkdir dir="${path.build.test-results}"/>
     <mkdir dir="${path.dist}"/>
+    <mkdir dir="${path.lib}"/>
   </target>
   
   <target name="deps" depends="-ivy-init" description="Retrieves project dependencies. Set ivy.dep.file to override the ivy file to use.">
@@ -67,7 +68,7 @@
     <delete dir="${path.dist}"/>
   </target>
   
-  <target name="compile" depends="-make-dirs,-require-version" description="Compile the source files.">
+  <target name="compile" depends="-make-dirs" description="Compile the source files.">
     <javac destdir="${path.build-classes}" compiler="modern" fork="yes" source="1.5" srcdir="${path.src}" debug="true">
       <classpath refid="compile.classpath"/>
     </javac>
