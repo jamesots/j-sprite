@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" xhref="http://www.jayasoft.fr/org/ivyrep/ivy-doc.xsl"?>
+<ivy-module version="2.0">
+	<info organisation="com.jdev" module="${artifact.name}" revision="${buildVersion}"/>
+
+	<configurations>
+		<conf name="compile" visibility="public" description="Compile dependencies"/>
+		<conf name="optional" visibility="public" extends="compile" description="Optional dependencies"/>
+		<conf name="provided" visibility="public" description="Provided dependencies"/>
+		<conf name="runtime" visibility="public" extends="compile" description="Runtime dependencies"/>
+		<conf name="test" visibility="public" extends="compile" description="Test dependencies"/>
+	</configurations>
+
+	<publications>
+		<artifact name="${artifact.name}"/>
+	</publications>
+
+	<dependencies>
+	
+		<dependency org="net.sf" name="jargs" rev="1.0" conf="compile->runtime"/>
+		
+	</dependencies>
+</ivy-module>
