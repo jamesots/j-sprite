@@ -16,8 +16,6 @@
 	</publications>
 
 	<dependencies>
-	
-		<dependency org="net.sf" name="jargs" rev="1.0" conf="compile->runtime"/>
 		
 	</dependencies>
 </ivy-module>

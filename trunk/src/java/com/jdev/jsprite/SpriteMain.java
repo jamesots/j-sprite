@@ -5,7 +5,7 @@
 
 package com.jdev.jsprite;
 
-import jargs.gnu.CmdLineParser;
+import net.sf.jargs.CmdLineParser;
 
 /**
  *
