@@ -1,0 +1,36 @@
+#summary j-Sprite Usage
+
+= Command Line Options =
+
+|| *Shortcut* || *Full Option* || *Description* || *Default Value* ||
+|| -u || --usage || the full help list (i.e., this information) || _N/A_ ||
+
+*Directory Options*
+|| *Shortcut* || *Full Option* || *Description* || *Default Value* ||
+|| -l || --files || comma separated list of files to sprite || _N/A_ ||
+|| -d || --dir || directory containing images to sprite || _N/A_ ||
+|| -g || --regex || regular expression used to filter file names (used with -d flag only) || _N/A_ ||
+|| -r || --recurse || if flag is present, the program will look in subdirectories for other image files || _N/A_ ||
+|| -n || --hidden || include hidden subdirectories (used with -r flag only) || _N/A_ ||
+
+*Sprite Options*
+|| *Shortcut* || *Full Option* || *Description* || *Default Value* ||
+|| -o || --output || the output file || sprite.png ||
+|| -f || --format || the output format (e.g, png, jpeg, etc.) || PNG ||
+|| -p || --padding || the number of pixels to skip between images || 0 ||
+
+*Css Options*
+|| *Shortcut* || *Full Option* || *Description* || *Default Value* ||
+|| -c || --css || if flag is present, CSS will NOT be print || _N/A_ ||
+|| -e || --prefix || an optional prefix for the css class name ||  ||
+|| -t || --postfix || an optional postfix for the css class name ||  ||
+|| -s || --separator || the character used to separate prefix/postfix from classname || - ||
+|| -a || --appendTo || if specified, will append the css styles to this file, instead of creating a new one || ||
+|| -x || --extra || extra CSS style(s) to be added (should be a quoted string or valid CSS styles) || ||
+
+*HTML Options*
+|| *Shortcut* || *Full Option* || *Description* || *Default Value* ||
+|| -h || --html || generate a sample html file for the sprite || _N/A_ ||
+
+
+= Examples =
