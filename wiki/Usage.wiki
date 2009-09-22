@@ -33,7 +33,7 @@
 ----
 
 = Examples =
-To run j-Sprite, you must first type `java -jar jsprite.jar`, followed by the paramters.  This has been left out of the examples below.
+To run j-Sprite, you must first type `java -jar jsprite.jar`, followed by any paramters.
 
 || *Flag and value* || *Meaning* ||
 || -f "image1.png, image2.jpeg, image3.gif" || sprite the three images specified ||
