@@ -1,15 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package com.jdev.jsprite;
 
+import java.io.File;
 import net.sf.jargs.CmdLineParser;
 
 /**
  *
- * @author U0105442
+ * @author jdeverna
  */
 public class SpriteMain {
 
@@ -37,6 +34,7 @@ public class SpriteMain {
           .append("-s, --separator : [\"-\"] the character used to separate prefix/postfix from classname \n")
           .append("-a, --appendTo  : if specified, will append the css styles to this file, instead of creating a new one\n")
           .append("-x, --extra     : extra CSS style(s) to be added (should be a quoted string or valid CSS styles)\n")
+          .append("-i, --inline    : use data URI scheme (as defined in RFC 2397) for inline images, instead of normal urls\n")
 
           .append("\nHTML Options\n")
           .append("-h, --html      : generate a sample html file for the sprite\n");
@@ -48,6 +46,10 @@ public class SpriteMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
+       if(args[0].equals("test")){
+          runTest();
+          return;
+       }
 
        CmdLineParser parser = new CmdLineParser();
        CmdLineParser.Option recurse = parser.addBooleanOption('r',"recurse");
@@ -66,6 +68,7 @@ public class SpriteMain {
        CmdLineParser.Option append = parser.addStringOption('a',"appendTo");
        CmdLineParser.Option separator = parser.addStringOption('s',"separator");
        CmdLineParser.Option extra = parser.addStringOption('x',"extra");
+       CmdLineParser.Option inline = parser.addBooleanOption('i',"inline");
 
        CmdLineParser.Option html = parser.addBooleanOption('h',"html");
 
@@ -112,8 +115,10 @@ public class SpriteMain {
             request.setAppendTo( (String)parser.getOptionValue(append) );
             request.setSeparator( (String)parser.getOptionValue(separator, "-") );
             request.setExtraCss( (String)parser.getOptionValue(extra, "") );
+            request.useInlineImage( (Boolean)parser.getOptionValue(inline, false) );
 
-            SpriteMaker.processRequest(request);
+            SpriteMaker maker = new SpriteMaker(request);
+            maker.processRequest();
         }
        catch ( CmdLineParser.OptionException e ) {
             System.err.println( e.getMessage() );
@@ -125,4 +130,69 @@ public class SpriteMain {
            System.exit(2);
        }
     }
+
+
+    public static void runTest(){
+        String[] folders = new String[]{"1","5","10","20","50","80","100","200","400","600","800","1000"};
+
+        for(int i = 0; i < folders.length; i++){
+            String folder = folders[i];
+            System.out.println("\nFOLDER: " + folder);
+            
+            SpriteRequest request = new SpriteRequest();
+            request.setRecurse( false );
+            request.setHidden( false );
+            request.setFilesByDirectory(folder);
+
+            request.setOutputType( "PNG" );
+            request.setOutputFile( "output" + File.separator + "sprite_"+folder+".png" );
+            request.setSpritePadding( 0 );
+            request.setCreateCss( null );
+            request.setCreateHtml( true );
+
+            request.setPrefix( "icon" );
+            request.setPostfix( null );
+            request.setAppendTo( null );
+            request.setSeparator( "_" );
+            request.setExtraCss( "" );
+            request.useInlineImage( false );
+            request.setNormal(false);
+            
+            System.out.println("\nSPRITE: " + folder);
+                long start = System.currentTimeMillis();
+                SpriteMaker makerSprite = new SpriteMaker(request);
+                makerSprite.processRequest();
+            System.out.println("\nProcess time: " + (System.currentTimeMillis() - start) + "ms");
+
+            System.out.println("CSS size: " + new File( request.getOutputFile() + ".css").length() );
+            System.out.println("HTML size: " + new File( request.getOutputFile() + ".html").length());
+            System.out.println("Sprite Size: " + new ImageFile("test", new File(request.getOutputFile())).getFileSize() );
+
+            request.useInlineImage( true );
+            request.setOutputFile( "output" + File.separator + "inline_" + folder );
+            System.out.println("\nINLINE: " + folder);
+                start = System.currentTimeMillis();
+                SpriteMaker makerInline = new SpriteMaker(request);
+                makerInline.processRequest();
+            System.out.println("\nProcess time: " + (System.currentTimeMillis() - start) + "ms");
+            System.out.println("CSS size: " + new File(request.getOutputFile() + ".css").length() );
+            System.out.println("HTML size: " + new File(request.getOutputFile() + ".html").length());
+
+
+            request.useInlineImage( false );
+            request.setNormal(true);
+            request.setOutputFile( "output" + File.separator + "normal_" + folder );
+            System.out.println("\nNORMAL: " + folder);
+                start = System.currentTimeMillis();
+                SpriteMaker makerNormal = new SpriteMaker(request);
+                makerNormal.processRequest();
+            System.out.println("\nProcess time: " + (System.currentTimeMillis() - start) + "ms");
+            System.out.println("CSS size: " + new File(request.getOutputFile() + ".css").length() );
+            System.out.println("HTML size: " + new File(request.getOutputFile() + ".html").length());
+
+            System.out.println("\n---------------------------------------------------\n");
+        }
+    }
 }
+
+

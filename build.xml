@@ -15,6 +15,7 @@
   <property name="path.build-test" value="${path.build}/classes-test"/>
   <property name="path.build.test-results" value="${path.build}/test-results"/>
   <property name="path.dist" value="dist"/>
+  <property name="path.dist.lib" value="${path.dist}/lib"/>
   <path id="compile.classpath">
     <fileset dir="${path.lib}">
       <include name="*.jar"/>
@@ -78,14 +79,33 @@
     <exec executable="svn" output="${path.build-classes}/svn.info">
         <arg value="info"/>
     </exec>
+    
+    <copy todir="${path.dist.lib}" overwrite="true">
+        <fileset dir="${path.lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </copy>
+
+    <property name="jars-runtime" location="${path.dist.lib}" />
+    <fileset id="jars" dir="${jars-runtime}">
+        <include name="*.jar" />
+    </fileset>
+
+    <path id="cp"> <fileset refid="jars" /> </path>
+
+    <pathconvert property="_classpath" refid="cp" pathsep=" " dirsep="/">
+        <map from="${jars-runtime}" to="lib" />
+    </pathconvert>
+
     <jar destfile="${path.dist}/${artifact.name}.jar" basedir="${path.build-classes}">
-	<manifest>
-		<!-- Information about the program itself -->
-		<attribute name="build-artifact" value="${artifact.name}"/>
-		<attribute name="build-version" value="${buildVersion}"/>
-                <attribute name="build-time" value="${build.time}"/>
-                <attribute name="Main-Class" value="com.jdev.jsprite.SpriteMain"/>
-	</manifest>
+        <manifest>
+            <!-- Information about the program itself -->
+            <attribute name="build-artifact" value="${artifact.name}"/>
+            <attribute name="build-version" value="${buildVersion}"/>
+            <attribute name="build-time" value="${build.time}"/>
+            <attribute name="Main-Class" value="com.jdev.jsprite.SpriteMain"/>
+            <attribute name="Class-Path" value="${_classpath} lib/"/>
+        </manifest>
     </jar>
   </target>
 
