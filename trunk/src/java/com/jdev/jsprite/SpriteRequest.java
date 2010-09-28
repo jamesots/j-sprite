@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package com.jdev.jsprite;
 
@@ -12,7 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  *
- * @author U0105442
+ * @author jdeverna
  */
 public class SpriteRequest {
 
@@ -48,7 +44,18 @@ public class SpriteRequest {
     private String postfix;
     private String separator;
     private String extraCss;
-    
+    private boolean inlineImage;
+
+    private boolean normal;
+
+    public boolean isNormal() {
+        return normal;
+    }
+
+    public void setNormal(boolean normal) {
+        this.normal = normal;
+    }
+
     public SpriteRequest(){}
 
     public File[] getFileList(){
@@ -114,6 +121,14 @@ public class SpriteRequest {
 
     public void setExtraCss(String extraCss) {
         this.extraCss = extraCss;
+    }
+
+    public boolean isInlineImage(){
+        return this.inlineImage;
+    }
+
+    public void useInlineImage(boolean useInlineImage){
+        this.inlineImage = useInlineImage;
     }
 
     public Integer getSpritePadding() {

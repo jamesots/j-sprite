@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package com.jdev.jsprite;
 
@@ -12,7 +8,7 @@ import javax.imageio.ImageIO;
 
 /**
  *
- * @author U0105442
+ * @author jdeverna
  */
 public class ImageFile {
 

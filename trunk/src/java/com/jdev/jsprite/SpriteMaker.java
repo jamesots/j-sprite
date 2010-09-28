@@ -1,10 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package com.jdev.jsprite;
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -13,8 +10,10 @@ import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,40 +23,112 @@ import javax.imageio.ImageIO;
 
 /**
  *
- * @author U0105442
+ * @author jdeverna
  */
 public class SpriteMaker {
 
     public static final Pattern extensionPattern = Pattern.compile("(.*)\\.\\w{3,4}");
     public static final DecimalFormat numberFormat = new DecimalFormat("#.##");
+    
+    private final SpriteRequest request;
 
-    public static void processRequest(SpriteRequest request){
-       SpriteMaker.combine(request);
+    private Map<String,ImageFile> images = new HashMap();    
+    private StringBuilder css;
+    private StringBuilder html;
+
+
+    public SpriteMaker(SpriteRequest request){
+        this.request = request;
     }
 
-    public static void combine(SpriteRequest request) {
+    public void processRequest(){
+
+        if(request.getFileList() == null || request.getFileList().length <= 0){
+            System.err.println("No images found to sprite!");
+            System.exit(2);
+        }
+
+       if(request.isCreateHtml()){
+            html = new StringBuilder( beginHtml( getFileName( request.getOutputFile() ) ) );
+       }
+
+       //if we're inlining, we need to have css since we're not spriting
+       if(request.isCreateCss() || request.isInlineImage()){
+           css = new StringBuilder();
+       }
+
+       if(request.isInlineImage()){
+        inline();
+       }else if(request.isNormal()){
+        normal();
+       }else{
+        combine();
+       }
+    }
+
+    /**
+     *
+     */
+    public void inline(){
+        File[] files = request.getFileList();
+        int oversized = 0;
+        for(int i = 0; i < files.length; i++){
+            try{
+                String className = getUniqueClassName(request, files[i].getName(), images);
+                String encoded = base64Encode(files[i]);
+
+                if(encoded.getBytes().length > 1024){
+                   oversized++;
+                }
+
+                css.append(".")
+                   .append(className)
+                   .append(" {background-image: url(data:image/png;base64,")
+                   .append( encoded )
+                   .append("); background-repeat: no-repeat; ")
+                   .append( request.getExtraCss() )
+                   .append("}\n");
+
+                if(request.isCreateHtml()){
+                    html.append(createSampleDiv(className));
+                }
+            }catch(Exception e){
+
+            }
+        }
+
+        if(request.isCreateHtml()){
+            html.append( endHtml() );
+            writeOutputFile(html.toString(), request.getOutputFile()+".html");
+        }
+
+         writeOutputFile(css.toString(),
+                        (request.getAppendTo() != null ? request.getAppendTo() : request.getOutputFile() + ".css"),
+                        (request.getAppendTo() != null ? true : false)
+                       );
+        
+        if(oversized > 0){
+            System.out.println("Images where base64 is more than 1024: " + oversized);
+        }
+    }
+
+    /**
+     *
+     */
+    public void combine() {
         GraphicsDevice gs = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         GraphicsConfiguration gc = gs.getDefaultConfiguration();
 
-        StringBuilder css = new StringBuilder();
         StringBuilder imgNames = new StringBuilder();
-        StringBuilder html = new StringBuilder( beginHtml( getFileName( request.getOutputFile() ) ) );
-
-        Map<String,ImageFile> images = new HashMap();
 
         int totalHeight = 0, maxWidth = 0, failed = 0, passed = 0;
         long totalOrigFileSize = 0;
 
         File[] files = request.getFileList();
 
-        if(files.length <= 0){
-            System.err.println("No images found to sprite!");
-            System.exit(2);
-        }
-
         for(int i = 0; i < files.length; i++){
             try{
-                String className = SpriteMaker.getUniqueClassName(request, files[i].getName(), images);
+                String className = getUniqueClassName(request, files[i].getName(), images);
                 ImageFile image = new ImageFile(className, files[i]);
                 images.put(className, image);
 
@@ -65,7 +136,10 @@ public class SpriteMaker {
                 imgNames.append(".")
                         .append(className)
                         .append( (i < files.length-1 ? "," + ((i+1)%5 == 0 ? "\n" : "") : "") );
-                html.append(createSampleDiv(className));
+                
+                if(request.isCreateHtml()){
+                    html.append(createSampleDiv(className));
+                }
 
                 totalOrigFileSize += image.getFileSize();
                 totalHeight += image.getHeight() + request.getSpritePadding();
@@ -73,6 +147,7 @@ public class SpriteMaker {
 
             }catch(Exception e){
                 System.out.println("\n*failed to sprite: " + files[i].getName());
+                e.printStackTrace();
                 failed++;
             }
         }
@@ -92,7 +167,7 @@ public class SpriteMaker {
 		RenderingHints.KEY_RENDERING,
 		RenderingHints.VALUE_RENDER_QUALITY);
 
-	grp.setRenderingHints(rh);
+        grp.setRenderingHints(rh);
 
         try{
             Object[] key = images.keySet().toArray();
@@ -105,7 +180,11 @@ public class SpriteMaker {
 
                 grp.drawImage(imf.getImage(), null, 0, totalHeight);
 
-                css.append( writeCss(fileName, totalHeight, imf.getWidth(), imf.getHeight()) );
+                if(request.isCreateCss()){
+                    css.append( writeCss(fileName, totalHeight, imf.getWidth(), imf.getHeight()) );
+                }else{
+                    System.out.println("NOT creating CSS");
+                }
 
                 totalHeight += imf.getHeight() + request.getSpritePadding();
                 passed++;
@@ -124,25 +203,24 @@ public class SpriteMaker {
             System.out.println("Total file size after: " + newsize + "KB");
             System.out.println("Sprite savings: " + savingsamt + "KB, " + savings + "%" );
 
-
-            html.append("<div style=\"clear:both;\"><br/><br/>Successfully sprited ")
-                .append(passed)
-                .append(" images.<br/>Failed to sprite ")
-                .append(failed)
-                .append(" images.<br/><br/>")
-                .append("Total file size before: " + kborig + "KB<br/>")
-                .append("Total file size after: " + newsize + "KB<br/>")
-                .append("Sprite savings: " + savingsamt + "KB, " + savings + "%</div>" )
-                .append( endHtml() );
-
             if( request.isCreateCss() ){
-                writeOutputFile(imgNames.append("\n").append(css).toString(), 
+                writeOutputFile(imgNames.append("\n").append(css).toString(),
                                 (request.getAppendTo() != null ? request.getAppendTo() : request.getOutputFile() + ".css"),
                                 (request.getAppendTo() != null ? true : false)
                                );
             }
 
-            if( request.isCreateHtml() ){
+            if(request.isCreateHtml()){
+                html.append("<div style=\"clear:both;\"><br/><br/>Successfully sprited ")
+                    .append(passed)
+                    .append(" images.<br/>Failed to sprite ")
+                    .append(failed)
+                    .append(" images.<br/><br/>")
+                    .append("Total file size before: " + kborig + "KB<br/>")
+                    .append("Total file size after: " + newsize + "KB<br/>")
+                    .append("Sprite savings: " + savingsamt + "KB, " + savings + "%</div>" )
+                    .append( endHtml() );
+
                 writeOutputFile(html.toString(), request.getOutputFile()+".html");
             }
 
@@ -151,7 +229,41 @@ public class SpriteMaker {
         }
     }
 
-    private static String getUniqueClassName(SpriteRequest request, String fileName, Map allImages){
+    public void normal(){
+        File[] files = request.getFileList();
+
+        for(int i = 0; i < files.length; i++){
+            try{
+                String className = getUniqueClassName(request, files[i].getName(), images);
+
+                css.append(".")
+                   .append(className)
+                   .append(" {background-image: url(../images/")
+                   .append( files[i].getName() )
+                   .append("); background-repeat: no-repeat; ")
+                   .append( request.getExtraCss() )
+                   .append("}\n");
+
+                if(request.isCreateHtml()){
+                    html.append(createSampleDiv(className));
+                }
+            }catch(Exception e){
+
+            }
+        }
+
+        if(request.isCreateHtml()){
+            html.append( endHtml() );
+            writeOutputFile(html.toString(), request.getOutputFile()+".html");
+        }
+
+         writeOutputFile(css.toString(),
+                        (request.getAppendTo() != null ? request.getAppendTo() : request.getOutputFile() + ".css"),
+                        (request.getAppendTo() != null ? true : false)
+                       );
+    }
+
+    private String getUniqueClassName(SpriteRequest request, String fileName, Map allImages){
         String newname = extensionPattern.matcher(fileName).replaceAll("$1").replaceAll(" ", request.getSeparator());
 
         newname = (request.getPrefix() != null ? request.getPrefix() + request.getSeparator() + newname : newname);
@@ -165,7 +277,7 @@ public class SpriteMaker {
         return newname;
     }
 
-    private static String getFileName(String fullPath){
+    private String getFileName(String fullPath){
         String name = fullPath;
 
         if(fullPath.contains( File.pathSeparator)){
@@ -179,7 +291,7 @@ public class SpriteMaker {
         return name;
     }
 
-    private static String writeCss(String fileName, int totalHeight, int width, int height){
+    private String writeCss(String fileName, int totalHeight, int width, int height){
         StringBuffer buff = new StringBuffer();
 
         buff.append(".").append( fileName ).append(" {");
@@ -191,25 +303,27 @@ public class SpriteMaker {
         return buff.toString();
     }
 
-    private static String createSampleDiv(String name){
+    private String createSampleDiv(String name){
         return "<span class=\""+name+"\" alt=\""+name+"\" title=\""+name+"\"></span>\n";
     }
 
-    private static String beginHtml(String target){
+    private String beginHtml(String target){
         return "<html>\n<head>\n<link rel=\"stylesheet\" type=\"text/css\" href=\""+target+".css\"/>\n" +
-                "<style>span {display:block; float: left; margin: 5px;}</style>\n" +
+                "<style>span {display:block; float: left; margin: 5px;" +
+                (request.isNormal() || request.isInlineImage() ? "width: 16px;height:16px;" : "") +
+                "}</style>\n" +
                 "</head>\n<body><a href=\""+target+"\">view sprite</a><br/><br/>\n";
     }
 
-    private static String endHtml(){
+    private String endHtml(){
         return "</body>\n</html>";
     }
 
-    private static void writeOutputFile(String output, String fileName){
+    private void writeOutputFile(String output, String fileName){
         writeOutputFile(output, fileName, false);
     }
 
-    private static void writeOutputFile(String output, String fileName, boolean isAppend){
+    private void writeOutputFile(String output, String fileName, boolean isAppend){
         try{
             FileWriter fw = new FileWriter( fileName, isAppend );
             if(isAppend){
@@ -222,6 +336,63 @@ public class SpriteMaker {
         }catch(IOException ioe){
             ioe.printStackTrace();
         }
+    }
+
+    private String base64Encode(File file){
+
+        try{
+            
+            byte[] b = getBytesFromFile(file);
+            
+            return Base64.encode(b);
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+    private static byte[] getBytesFromFile(File file) throws IOException {
+
+        InputStream is = new FileInputStream(file);
+
+        // Get the size of the file
+        long length = file.length();
+
+        /*
+         * You cannot create an array using a long type. It needs to be an int
+         * type. Before converting to an int type, check to ensure that file is
+         * not loarger than Integer.MAX_VALUE;
+         */
+        if (length > Integer.MAX_VALUE) {
+            System.out.println("File is too large to process");
+            return null;
+        }
+
+        // Create the byte array to hold the data
+        byte[] bytes = new byte[(int)length];
+
+        // Read in the bytes
+        int offset = 0;
+        int numRead = 0;
+        while ( (offset < bytes.length)
+                &&
+                ( (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) ) {
+
+            offset += numRead;
+
+        }
+
+        // Ensure all the bytes have been read in
+        if (offset < bytes.length) {
+            throw new IOException("Could not completely read file " + file.getName());
+        }
+
+        is.close();
+        return bytes;
+
     }
 
 }
