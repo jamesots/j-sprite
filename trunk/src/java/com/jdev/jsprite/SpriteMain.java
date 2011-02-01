@@ -37,6 +37,7 @@ public class SpriteMain {
           .append("-i, --inline    : use data URI scheme (as defined in RFC 2397) for inline images, instead of normal urls\n")
           .append("-P, --imgPrefix : an optional URL for the CSS background attribute that will prefix the output name (from the -o option)\n")
           .append("-U, --imgUrl    : an optional URL for the CSS background attribute (the -o and -x flags will be ignored if this is specified)\n")
+          .append("-I, --important : if flag is present, \"!important\" flag will NOT be used for the background-position property\n")
 
           .append("\nHTML Options\n")
           .append("-h, --html      : generate a sample html file for the sprite\n");
@@ -73,6 +74,7 @@ public class SpriteMain {
        CmdLineParser.Option inline = parser.addBooleanOption('i',"inline");
        CmdLineParser.Option imgPrefix = parser.addStringOption('P',"imgPrefix");
        CmdLineParser.Option imgURL = parser.addStringOption('U',"imgUrl");
+        CmdLineParser.Option important = parser.addBooleanOption('I',"important");
 
        CmdLineParser.Option html = parser.addBooleanOption('h',"html");
 
@@ -122,6 +124,7 @@ public class SpriteMain {
             request.useInlineImage( (Boolean)parser.getOptionValue(inline, false) );
             request.setImagePrefix( (String)parser.getOptionValue(imgPrefix, null));
             request.setImageURL( (String)parser.getOptionValue(imgURL, null));
+            request.setUseImportantFlag( (Boolean)parser.getOptionValue(important) );
 
             SpriteMaker maker = new SpriteMaker(request);
             maker.processRequest();

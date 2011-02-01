@@ -47,6 +47,7 @@ public class SpriteRequest {
     private boolean inlineImage;
     private String imagePrefix;
     private String imageURL;
+    private boolean useImportantFlag;
 
     private boolean normal;
 
@@ -191,6 +192,14 @@ public class SpriteRequest {
 
     public String getImagePrefix(){
         return this.imagePrefix;
+    }
+
+    public boolean isUseImportantFlag() {
+        return this.useImportantFlag;
+    }
+
+    public void setUseImportantFlag(Boolean useImportantFlag){
+        this.useImportantFlag = (useImportantFlag == null ? Boolean.TRUE : Boolean.FALSE);
     }
 
     public void setImagePrefix(String imagePrefix){
