@@ -152,9 +152,24 @@ public class SpriteMaker {
             }
         }
 
+        // grab the full path to the image
+        String imgURL = request.getImageURL();
+
+        // if the url is empty and a prefix was specified
+        // use the prefix and make sure it ends with a "/"
+        // and add the output file name
+        if(imgURL == null && request.getImagePrefix() != null){
+            imgURL = request.getImagePrefix() + (request.getImagePrefix().endsWith("/") ? "" : "/") + getFileName(request.getOutputFile());
+        }
+
+        // if the url is still null, make it just the output filename
+        if(imgURL == null){
+            imgURL = getFileName(request.getOutputFile());
+        }
+
 
         imgNames.append(" {background-image: url(")
-                .append( getFileName(request.getOutputFile()) )
+                .append( imgURL )
                 .append("); background-repeat: no-repeat; ")
                 .append( request.getExtraCss() )
                 .append("}\n");

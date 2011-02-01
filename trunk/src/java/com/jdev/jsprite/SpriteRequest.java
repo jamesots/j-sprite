@@ -45,6 +45,8 @@ public class SpriteRequest {
     private String separator;
     private String extraCss;
     private boolean inlineImage;
+    private String imagePrefix;
+    private String imageURL;
 
     private boolean normal;
 
@@ -177,6 +179,22 @@ public class SpriteRequest {
 
     public void setTotalOrigFileSize(long totalOrigFileSize) {
         this.totalOrigFileSize = totalOrigFileSize;
+    }
+
+    public String getImageURL(){
+        return this.imageURL;
+    }
+
+    public void setImageURL(String imageURL){
+        this.imageURL = imageURL;
+    }
+
+    public String getImagePrefix(){
+        return this.imagePrefix;
+    }
+
+    public void setImagePrefix(String imagePrefix){
+        this.imagePrefix = imagePrefix;
     }
 
     public void setFilesByList(String files){
