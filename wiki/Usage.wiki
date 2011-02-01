@@ -29,7 +29,7 @@ To run j-Sprite, you must first type `java -jar jsprite.jar`, followed by any pa
 || -x || --extra || extra CSS style(s) to be added (should be a quoted string or valid CSS styles) || ||
 || -i || --inline || _experimental_ use data URI scheme (as defined in RFC 2397) for inline images, instead of normal urls || ||
 || -P || --imgPrefix || an optional URL for the CSS background attribute that will prefix the output name (from the -o option) || ||
-|| -U || --imgUrl || an optional URL for the CSS background attribute (the -o and -x flags will be ignored if this is specified) || ||
+|| -U || --imgUrl || an optional URL for the CSS background attribute (the -o and -P flags will be ignored if this is specified) || ||
 || -I || --important || if flag is present, "!important" flag will NOT be used for the background-position property || ||
 
 *HTML Options*
