@@ -35,6 +35,8 @@ public class SpriteMain {
           .append("-a, --appendTo  : if specified, will append the css styles to this file, instead of creating a new one\n")
           .append("-x, --extra     : extra CSS style(s) to be added (should be a quoted string or valid CSS styles)\n")
           .append("-i, --inline    : use data URI scheme (as defined in RFC 2397) for inline images, instead of normal urls\n")
+          .append("-P, --imgPrefix : an optional URL for the CSS background attribute that will prefix the output name (from the -o option)\n")
+          .append("-U, --imgUrl    : an optional URL for the CSS background attribute (the -o and -x flags will be ignored if this is specified)\n")
 
           .append("\nHTML Options\n")
           .append("-h, --html      : generate a sample html file for the sprite\n");
@@ -69,6 +71,8 @@ public class SpriteMain {
        CmdLineParser.Option separator = parser.addStringOption('s',"separator");
        CmdLineParser.Option extra = parser.addStringOption('x',"extra");
        CmdLineParser.Option inline = parser.addBooleanOption('i',"inline");
+       CmdLineParser.Option imgPrefix = parser.addStringOption('P',"imgPrefix");
+       CmdLineParser.Option imgURL = parser.addStringOption('U',"imgUrl");
 
        CmdLineParser.Option html = parser.addBooleanOption('h',"html");
 
@@ -116,6 +120,8 @@ public class SpriteMain {
             request.setSeparator( (String)parser.getOptionValue(separator, "-") );
             request.setExtraCss( (String)parser.getOptionValue(extra, "") );
             request.useInlineImage( (Boolean)parser.getOptionValue(inline, false) );
+            request.setImagePrefix( (String)parser.getOptionValue(imgPrefix, null));
+            request.setImageURL( (String)parser.getOptionValue(imgURL, null));
 
             SpriteMaker maker = new SpriteMaker(request);
             maker.processRequest();
