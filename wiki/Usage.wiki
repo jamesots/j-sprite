@@ -55,6 +55,9 @@ Below are parameter examples and their meaning.  For full usage examples, scroll
 || -a c:\mystyle.css || append the generated css to the file c:\mystyle.css ||
 || -x "padding-left: 20px;" || add the specified styles to every generated css class ||
 || -h || generate a sample html file demonstrating every generated css class ||
+|| -o mysprite.png -P {{{http://myurl.com/resources}}} || Output the sprite as mysprite.png, and use {{{http://myurl.com/resources/mysprite.png}}} as the background-url property in the css file ||
+|| -U {{{http://myurl.com/resources/sprt.png}}} || Use {{{http://myurl.com/resources/sprt.png}}} as the background-url property in the css file ||
+
 
 ----
 
