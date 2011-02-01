@@ -196,7 +196,7 @@ public class SpriteMaker {
                 grp.drawImage(imf.getImage(), null, 0, totalHeight);
 
                 if(request.isCreateCss()){
-                    css.append( writeCss(fileName, totalHeight, imf.getWidth(), imf.getHeight()) );
+                    css.append( writeCss(fileName, totalHeight, imf.getWidth(), imf.getHeight(), request.isUseImportantFlag()) );
                 }else{
                     System.out.println("NOT creating CSS");
                 }
@@ -306,14 +306,20 @@ public class SpriteMaker {
         return name;
     }
 
-    private String writeCss(String fileName, int totalHeight, int width, int height){
+    private String writeCss(String fileName, int totalHeight, int width, int height, boolean useImportantFlag){
         StringBuffer buff = new StringBuffer();
 
-        buff.append(".").append( fileName ).append(" {");
-        buff.append("background-position: 0px -").append(totalHeight).append("px; ");
-        buff.append("height:").append(height).append("px; ");
-        buff.append("width:").append(width).append("px; ");
-        buff.append("}\n");
+        buff.append(".").append( fileName ).append(" {")
+            .append("background-position: 0px -").append(totalHeight).append("px");
+
+        if(useImportantFlag){
+            buff.append(" !important");
+        }
+
+        buff.append("; ")
+            .append("height:").append(height).append("px; ")
+            .append("width:").append(width).append("px; ")
+            .append("}\n");
 
         return buff.toString();
     }
