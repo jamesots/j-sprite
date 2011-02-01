@@ -27,6 +27,9 @@ To run j-Sprite, you must first type `java -jar jsprite.jar`, followed by any pa
 || -s || --separator || the character used to separate prefix/postfix from classname (and to replace spaces in filenames) || - _(dash)_ ||
 || -a || --appendTo || if specified, will append the css styles to this file, instead of creating a new one || ||
 || -x || --extra || extra CSS style(s) to be added (should be a quoted string or valid CSS styles) || ||
+|| -i || --inline || _experimental_ use data URI scheme (as defined in RFC 2397) for inline images, instead of normal urls || ||
+|| -P || --imgPrefix || an optional URL for the CSS background attribute that will prefix the output name (from the -o option) || ||
+|| -U || --imgUrl || an optional URL for the CSS background attribute (the -o and -x flags will be ignored if this is specified) || ||
 
 *HTML Options*
 || *Shortcut* || *Full Option* || *Description* || *Default Value* ||
