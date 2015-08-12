@@ -252,17 +252,10 @@ public class SpriteRequest {
         this.recurseDirectories(dirs, validFileFilter);
     }
 
-    private void appendToFileList(File[] newFiles) {
+    void appendToFileList(File[] newFiles) {
         File[] newList = new File[this.fileList.length + newFiles.length];
-        int i;
-        for (i = 0; i < this.fileList.length; i++) {
-            newList[i] = this.fileList[i];
-        }
-
-        for (int j = 0; j < newFiles.length; j++) {
-            newList[i + j] = newList[j];
-        }
-
+        System.arraycopy(this.fileList, 0, newList, 0, this.fileList.length);
+        System.arraycopy(newFiles, 0, newList, this.fileList.length, newFiles.length);
         this.fileList = newList;
     }
 
