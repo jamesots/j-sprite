@@ -1,0 +1,17 @@
+apply plugin: "java"
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.5'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
+}
+
+ant.tstamp() {
+    format(property: 'buildTime', pattern: 'dd-MMM-yyyy HH:mm:ss', locale: 'en')
+}
+
+jar {
+    manifest {
+        attributes "build-time": ant.buildTime
+        attributes "Main-Class": "com.jdev.jsprite.SpriteMain"
+    }
+}
