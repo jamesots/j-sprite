@@ -1,7 +1,7 @@
 
 package com.jdev.jsprite;
 
-import android.util.Base64;
+import com.jdev.android.util.Base64;
 
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;

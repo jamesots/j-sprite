@@ -1,4 +1,4 @@
-package net.sf.jargs;
+package com.jdev.net.sf.jargs;
 
 import java.text.NumberFormat;
 import java.text.ParseException;

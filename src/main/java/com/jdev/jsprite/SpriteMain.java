@@ -4,7 +4,7 @@ package com.jdev.jsprite;
 import java.io.File;
 import java.io.IOException;
 
-import net.sf.jargs.CmdLineParser;
+import com.jdev.net.sf.jargs.CmdLineParser;
 
 /**
  * @author jdeverna
