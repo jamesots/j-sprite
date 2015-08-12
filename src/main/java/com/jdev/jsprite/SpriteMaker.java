@@ -1,7 +1,7 @@
 
 package com.jdev.jsprite;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import android.util.Base64;
 
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -368,7 +368,7 @@ public class SpriteMaker {
 
             byte[] b = getBytesFromFile(file);
 
-            return Base64.encode(b);
+            return Base64.encodeToString(b, Base64.NO_WRAP);
 
         } catch (Exception e) {
             e.printStackTrace();
