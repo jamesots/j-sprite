@@ -18,17 +18,12 @@ public class ImageFile {
     private long fileSize;
     private String name;
 
-    public ImageFile(String name, File f){
-        try{
-            image = ImageIO.read(f);
-            width = image.getWidth();
-            height = image.getHeight();
-            fileSize = f.length();
-            this.name = name;
-            
-        }catch(IOException ioe){
-            ioe.printStackTrace();
-        }
+    public ImageFile(String name, File f) throws IOException {
+        image = ImageIO.read(f);
+        width = image.getWidth();
+        height = image.getHeight();
+        fileSize = f.length();
+        this.name = name;
     }
 
     public long getFileSize() {

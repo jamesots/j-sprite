@@ -2,6 +2,8 @@
 package com.jdev.jsprite;
 
 import java.io.File;
+import java.io.IOException;
+
 import net.sf.jargs.CmdLineParser;
 
 /**
@@ -175,7 +177,11 @@ public class SpriteMain {
 
             System.out.println("CSS size: " + new File( request.getOutputFile() + ".css").length() );
             System.out.println("HTML size: " + new File( request.getOutputFile() + ".html").length());
-            System.out.println("Sprite Size: " + new ImageFile("test", new File(request.getOutputFile())).getFileSize() );
+            try {
+                System.out.println("Sprite Size: " + new ImageFile("test", new File(request.getOutputFile())).getFileSize());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             request.useInlineImage( true );
             request.setOutputFile( "output" + File.separator + "inline_" + folder );

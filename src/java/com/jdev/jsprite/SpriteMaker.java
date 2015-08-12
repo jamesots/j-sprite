@@ -32,7 +32,7 @@ public class SpriteMaker {
     
     private final SpriteRequest request;
 
-    private Map<String,ImageFile> images = new HashMap();    
+    private Map<String,ImageFile> images = new HashMap();
     private StringBuilder css;
     private StringBuilder html;
 
@@ -126,6 +126,7 @@ public class SpriteMaker {
 
         File[] files = request.getFileList();
 
+        boolean first = true;
         for(int i = 0; i < files.length; i++){
             try{
                 String className = getUniqueClassName(request, files[i].getName(), images);
@@ -133,9 +134,11 @@ public class SpriteMaker {
                 images.put(className, image);
 
                 //append the css and html info for this image
+                if (!first) {
+                    imgNames.append("," + ((i+1)%5 == 0 ? "\n" : ""));
+                }
                 imgNames.append(".")
-                        .append(className)
-                        .append( (i < files.length-1 ? "," + ((i+1)%5 == 0 ? "\n" : "") : "") );
+                        .append(className);
                 
                 if(request.isCreateHtml()){
                     html.append(createSampleDiv(className));
@@ -145,9 +148,9 @@ public class SpriteMaker {
                 totalHeight += image.getHeight() + request.getSpritePadding();
                 maxWidth = image.getWidth() > maxWidth ? image.getWidth() : maxWidth;
 
+                first = false;
             }catch(Exception e){
-                System.out.println("\n*failed to sprite: " + files[i].getName());
-                e.printStackTrace();
+                System.out.println(" * failed to sprite: " + files[i].getName() + ": " + e.getMessage());
                 failed++;
             }
         }
