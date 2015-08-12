@@ -7,7 +7,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 /**
- *
  * @author jdeverna
  */
 public class ImageFile {

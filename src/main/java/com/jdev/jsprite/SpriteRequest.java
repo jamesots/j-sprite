@@ -7,16 +7,15 @@ import java.io.FilenameFilter;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author jdeverna
  */
 public class SpriteRequest {
 
     private static final Pattern validFilePattern = Pattern.compile("^.*\\.(png|gif|jpg|jpeg|bmp)$", Pattern.CASE_INSENSITIVE);
-    
+
     private static final FilenameFilter validFileFilter = new FilenameFilter() {
         public boolean accept(File dir, String name) {
-            if(validFilePattern.matcher(name).matches()){
+            if (validFilePattern.matcher(name).matches()) {
                 return true;
             }
             return false;
@@ -59,9 +58,10 @@ public class SpriteRequest {
         this.normal = normal;
     }
 
-    public SpriteRequest(){}
+    public SpriteRequest() {
+    }
 
-    public File[] getFileList(){
+    public File[] getFileList() {
         return this.fileList;
     }
 
@@ -126,11 +126,11 @@ public class SpriteRequest {
         this.extraCss = extraCss;
     }
 
-    public boolean isInlineImage(){
+    public boolean isInlineImage() {
         return this.inlineImage;
     }
 
-    public void useInlineImage(boolean useInlineImage){
+    public void useInlineImage(boolean useInlineImage) {
         this.inlineImage = useInlineImage;
     }
 
@@ -182,15 +182,15 @@ public class SpriteRequest {
         this.totalOrigFileSize = totalOrigFileSize;
     }
 
-    public String getImageURL(){
+    public String getImageURL() {
         return this.imageURL;
     }
 
-    public void setImageURL(String imageURL){
+    public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
     }
 
-    public String getImagePrefix(){
+    public String getImagePrefix() {
         return this.imagePrefix;
     }
 
@@ -198,37 +198,37 @@ public class SpriteRequest {
         return this.useImportantFlag;
     }
 
-    public void setUseImportantFlag(Boolean useImportantFlag){
+    public void setUseImportantFlag(Boolean useImportantFlag) {
         this.useImportantFlag = (useImportantFlag == null ? Boolean.TRUE : Boolean.FALSE);
     }
 
-    public void setImagePrefix(String imagePrefix){
+    public void setImagePrefix(String imagePrefix) {
         this.imagePrefix = imagePrefix;
     }
 
-    public void setFilesByList(String files){
+    public void setFilesByList(String files) {
         String[] list = files.split(",");
 
         File[] flist = new File[list.length];
 
-        for(int i = 0; i < list.length; i++){
-            flist[i] = new File( list[i].trim() );
+        for (int i = 0; i < list.length; i++) {
+            flist[i] = new File(list[i].trim());
         }
 
         this.fileList = flist;
     }
 
-    public void setFilesByDirectory(String directory){
+    public void setFilesByDirectory(String directory) {
         File dir = new File(directory);
         this.fileList = dir.listFiles(validFileFilter);
 
         //if we want to recurse, check subfolders for more documents
-        if(this.recurse){
+        if (this.recurse) {
             this.recurseDirectories(dir.listFiles(directoryFilter));
         }
     }
 
-    public void setFilesByRegex(String directory, String regex){
+    public void setFilesByRegex(String directory, String regex) {
         File dir = new File(directory);
 
         FilenameFilter filter = new CustomFilenameFilter(regex);
@@ -236,57 +236,56 @@ public class SpriteRequest {
         this.fileList = dir.listFiles(filter);
 
         //if we want to recurse, check subfolders for more documents
-        if(this.recurse){
+        if (this.recurse) {
             this.recurseDirectories(dir.listFiles(directoryFilter), filter);
         }
     }
 
-    private void recurseDirectories(File[] dirs, FilenameFilter filter){
+    private void recurseDirectories(File[] dirs, FilenameFilter filter) {
 
-        for(int i = 0; i < dirs.length; i++){
-            this.appendToFileList( dirs[i].listFiles(filter) );
+        for (int i = 0; i < dirs.length; i++) {
+            this.appendToFileList(dirs[i].listFiles(filter));
 
-            if(this.recurse){
+            if (this.recurse) {
                 this.recurseDirectories(dirs[i].listFiles(directoryFilter), filter);
             }
         }
     }
 
-    private void recurseDirectories(File[] dirs){
+    private void recurseDirectories(File[] dirs) {
         this.recurseDirectories(dirs, validFileFilter);
     }
 
-    private void appendToFileList(File[] newFiles){
-        File[] newList = new File[ this.fileList.length + newFiles.length ];
+    private void appendToFileList(File[] newFiles) {
+        File[] newList = new File[this.fileList.length + newFiles.length];
         int i = 0;
-        for(i = 0; i < this.fileList.length; i++){
+        for (i = 0; i < this.fileList.length; i++) {
             newList[i] = this.fileList[i];
         }
 
-        for(int j = 0; j < newFiles.length; j++){
-            newList[i+j] = newList[j];
+        for (int j = 0; j < newFiles.length; j++) {
+            newList[i + j] = newList[j];
         }
 
         this.fileList = newList;
     }
 
 
-
     private class CustomFilenameFilter implements FilenameFilter {
 
         private Pattern customPattern;
 
-        public CustomFilenameFilter(Pattern pattern){
+        public CustomFilenameFilter(Pattern pattern) {
             this.customPattern = pattern;
         }
 
-        public CustomFilenameFilter(String regex){
-            this.customPattern = Pattern.compile( regex, Pattern.CASE_INSENSITIVE );
+        public CustomFilenameFilter(String regex) {
+            this.customPattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         }
 
         public boolean accept(File dir, String name) {
-            
-            if(validFilePattern.matcher(name).matches() && this.customPattern.matcher(name).matches()){
+
+            if (validFilePattern.matcher(name).matches() && this.customPattern.matcher(name).matches()) {
                 return true;
             }
 
@@ -299,7 +298,7 @@ public class SpriteRequest {
         private boolean recurseHidden = false;
 
         public boolean accept(File pathname) {
-            return pathname.isDirectory() && (!recurseHidden || (recurseHidden && !pathname.isHidden()) );
+            return pathname.isDirectory() && (!recurseHidden || (recurseHidden && !pathname.isHidden()));
         }
 
         public boolean isRecurseHidden() {
