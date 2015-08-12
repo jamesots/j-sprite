@@ -15,10 +15,7 @@ public class SpriteRequest {
 
     private static final FilenameFilter validFileFilter = new FilenameFilter() {
         public boolean accept(File dir, String name) {
-            if (validFilePattern.matcher(name).matches()) {
-                return true;
-            }
-            return false;
+            return validFilePattern.matcher(name).matches();
         }
     };
 
@@ -242,12 +239,11 @@ public class SpriteRequest {
     }
 
     private void recurseDirectories(File[] dirs, FilenameFilter filter) {
-
-        for (int i = 0; i < dirs.length; i++) {
-            this.appendToFileList(dirs[i].listFiles(filter));
+        for (File dir : dirs) {
+            this.appendToFileList(dir.listFiles(filter));
 
             if (this.recurse) {
-                this.recurseDirectories(dirs[i].listFiles(directoryFilter), filter);
+                this.recurseDirectories(dir.listFiles(directoryFilter), filter);
             }
         }
     }
@@ -258,7 +254,7 @@ public class SpriteRequest {
 
     private void appendToFileList(File[] newFiles) {
         File[] newList = new File[this.fileList.length + newFiles.length];
-        int i = 0;
+        int i;
         for (i = 0; i < this.fileList.length; i++) {
             newList[i] = this.fileList[i];
         }
@@ -285,11 +281,8 @@ public class SpriteRequest {
 
         public boolean accept(File dir, String name) {
 
-            if (validFilePattern.matcher(name).matches() && this.customPattern.matcher(name).matches()) {
-                return true;
-            }
+            return validFilePattern.matcher(name).matches() && this.customPattern.matcher(name).matches();
 
-            return false;
         }
     }
 
@@ -298,7 +291,7 @@ public class SpriteRequest {
         private boolean recurseHidden = false;
 
         public boolean accept(File pathname) {
-            return pathname.isDirectory() && (!recurseHidden || (recurseHidden && !pathname.isHidden()));
+            return pathname.isDirectory() && (!recurseHidden || (!pathname.isHidden()));
         }
 
         public boolean isRecurseHidden() {

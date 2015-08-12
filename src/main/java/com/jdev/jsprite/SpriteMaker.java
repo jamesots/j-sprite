@@ -32,7 +32,7 @@ public class SpriteMaker {
 
     private final SpriteRequest request;
 
-    private Map<String, ImageFile> images = new HashMap();
+    private Map<String, ImageFile> images = new HashMap<>();
     private StringBuilder css;
     private StringBuilder html;
 
@@ -72,10 +72,10 @@ public class SpriteMaker {
     public void inline() {
         File[] files = request.getFileList();
         int oversized = 0;
-        for (int i = 0; i < files.length; i++) {
+        for (File file : files) {
             try {
-                String className = getUniqueClassName(request, files[i].getName(), images);
-                String encoded = base64Encode(files[i]);
+                String className = getUniqueClassName(request, file.getName(), images);
+                String encoded = base64Encode(file);
 
                 if (encoded.getBytes().length > 1024) {
                     oversized++;
@@ -104,7 +104,7 @@ public class SpriteMaker {
 
         writeOutputFile(css.toString(),
                 (request.getAppendTo() != null ? request.getAppendTo() : request.getOutputFile() + ".css"),
-                (request.getAppendTo() != null ? true : false)
+                (request.getAppendTo() != null)
         );
 
         if (oversized > 0) {
@@ -135,7 +135,7 @@ public class SpriteMaker {
 
                 //append the css and html info for this image
                 if (!first) {
-                    imgNames.append("," + ((i + 1) % 5 == 0 ? "\n" : ""));
+                    imgNames.append(",").append((i + 1) % 5 == 0 ? "\n" : "");
                 }
                 imgNames.append(".")
                         .append(className);
@@ -193,8 +193,8 @@ public class SpriteMaker {
             Arrays.sort(key);
 
             totalHeight = 0;
-            for (int j = 0; j < key.length; j++) {
-                ImageFile imf = (ImageFile) images.get((String) key[j]);
+            for (Object aKey : key) {
+                ImageFile imf = images.get(aKey);
                 String fileName = imf.getName();
 
                 grp.drawImage(imf.getImage(), null, 0, totalHeight);
@@ -225,19 +225,17 @@ public class SpriteMaker {
             if (request.isCreateCss()) {
                 writeOutputFile(imgNames.append("\n").append(css).toString(),
                         (request.getAppendTo() != null ? request.getAppendTo() : request.getOutputFile() + ".css"),
-                        (request.getAppendTo() != null ? true : false)
+                        (request.getAppendTo() != null)
                 );
             }
 
             if (request.isCreateHtml()) {
-                html.append("<div style=\"clear:both;\"><br/><br/>Successfully sprited ")
-                        .append(passed)
-                        .append(" images.<br/>Failed to sprite ")
-                        .append(failed)
-                        .append(" images.<br/><br/>")
-                        .append("Total file size before: " + kborig + "KB<br/>")
-                        .append("Total file size after: " + newsize + "KB<br/>")
-                        .append("Sprite savings: " + savingsamt + "KB, " + savings + "%</div>")
+                html.append("<div style=\"clear:both;\"><br/><br/>Successfully sprited ").append(passed)
+                        .append(" images.<br/>Failed to sprite ").append(failed).append(" images.<br/><br/>")
+                        .append("Total file size before: ").append(kborig).append("KB<br/>")
+                        .append("Total file size after: ").append(newsize).append("KB<br/>")
+                        .append("Sprite savings: ").append(savingsamt).append("KB, ")
+                        .append(savings).append("%</div>")
                         .append(endHtml());
 
                 writeOutputFile(html.toString(), request.getOutputFile() + ".html");
@@ -251,14 +249,14 @@ public class SpriteMaker {
     public void normal() {
         File[] files = request.getFileList();
 
-        for (int i = 0; i < files.length; i++) {
+        for (File file : files) {
             try {
-                String className = getUniqueClassName(request, files[i].getName(), images);
+                String className = getUniqueClassName(request, file.getName(), images);
 
                 css.append(".")
                         .append(className)
                         .append(" {background-image: url(../images/")
-                        .append(files[i].getName())
+                        .append(file.getName())
                         .append("); background-repeat: no-repeat; ")
                         .append(request.getExtraCss())
                         .append("}\n");
@@ -278,7 +276,7 @@ public class SpriteMaker {
 
         writeOutputFile(css.toString(),
                 (request.getAppendTo() != null ? request.getAppendTo() : request.getOutputFile() + ".css"),
-                (request.getAppendTo() != null ? true : false)
+                (request.getAppendTo() != null)
         );
     }
 
@@ -312,7 +310,7 @@ public class SpriteMaker {
     }
 
     private String writeCss(String fileName, int totalHeight, int width, int height, boolean useImportantFlag) {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
 
         buff.append(".").append(fileName).append(" {")
                 .append("background-position: 0px -").append(totalHeight).append("px");
@@ -390,7 +388,7 @@ public class SpriteMaker {
         /*
          * You cannot create an array using a long type. It needs to be an int
          * type. Before converting to an int type, check to ensure that file is
-         * not loarger than Integer.MAX_VALUE;
+         * not larger than Integer.MAX_VALUE;
          */
         if (length > Integer.MAX_VALUE) {
             System.out.println("File is too large to process");
@@ -402,13 +400,10 @@ public class SpriteMaker {
 
         // Read in the bytes
         int offset = 0;
-        int numRead = 0;
+        int numRead;
         while ((offset < bytes.length)
-                &&
-                ((numRead = is.read(bytes, offset, bytes.length - offset)) >= 0)) {
-
+                && ((numRead = is.read(bytes, offset, bytes.length - offset)) >= 0)) {
             offset += numRead;
-
         }
 
         // Ensure all the bytes have been read in
