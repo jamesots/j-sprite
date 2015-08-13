@@ -42,7 +42,7 @@ public class SpriteMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        if (args[0].equals("test")) {
+        if (args.length > 0 && args[0].equals("test")) {
             runTest();
             return;
         }
