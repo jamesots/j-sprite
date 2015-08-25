@@ -10,32 +10,36 @@ import com.jdev.net.sf.jargs.CmdLineParser;
  * @author jdeverna
  */
 public class SpriteMain {
-
     private static void printUsage() {
-        System.err.println("\nSprite Builder Usage:\n\n"
-                + "-u, --usage     : this list\n"
-                + "\nDirectory Options (Either the -d or -l flag must be passed)\n"
-                + "-l, --files     : comma separated list of files to sprite\n"
-                + "-d, --dir       : directory containing images to sprite\n"
-                + "-g, --regex     : regular expression used to filter file names (used with -d flag only)\n"
-                + "-r, --recurse   : if flag is present, the program will look in subdirectories for other image files\n"
-                + "-n, --hidden    : include hidden subdirectories (used with -r flag only)\n"
-                + "\nSprite Options\n"
-                + "-o, --output    : [sprite.png] the output file\n"
-                + "-f, --format    : [png] the output format (e.g, png, jpeg, etc.)\n"
-                + "-p, --padding   : [0] the number of pixels to skip between images\n"
-                + "\nCss Options\n"
-                + "-c, --css       : if flag is present, CSS will NOT be print\n"
-                + "-e, --prefix    : an optional prefix for the css class name\n"
-                + "-t, --postfix   : an optional postfix for the css class name\n"
-                + "-s, --separator : [\"-\"] the character used to separate prefix/postfix from classname \n"
-                + "-a, --appendTo  : if specified, will append the css styles to this file, instead of creating a new one\n"
-                + "-x, --extra     : extra CSS style(s) to be added (should be a quoted string or valid CSS styles)\n"
-                + "-i, --inline    : use data URI scheme (as defined in RFC 2397) for inline images, instead of normal urls\n"
-                + "-P, --imgPrefix : an optional URL for the CSS background attribute that will prefix the output name (from the -o option)\n"
-                + "-U, --imgUrl    : an optional URL for the CSS background attribute (the -o and -x flags will be ignored if this is specified)\n"
-                + "-I, --important : if flag is present, \"!important\" flag will NOT be used for the background-position property\n"
-                + "\nHTML Options\n" + "-h, --html      : generate a sample html file for the sprite\n");
+        System.err.println("Sprite Builder Usage:");
+        System.err.println("-u, --usage     : this list");
+        System.err.println();
+        System.err.println("Directory Options (Either the -d or -l flag must be passed)");
+        System.err.println("-l, --files     : comma separated list of files to sprite");
+        System.err.println("-d, --dir       : directory containing images to sprite");
+        System.err.println("-g, --regex     : regular expression used to filter file names (used with -d flag only)");
+        System.err.println("-r, --recurse   : if flag is present, the program will look in subdirectories for other image files");
+        System.err.println("-n, --hidden    : include hidden subdirectories (used with -r flag only)");
+        System.err.println();
+        System.err.println("Sprite Options");
+        System.err.println("-o, --output    : [sprite.png] the output file");
+        System.err.println("-f, --format    : [png] the output format (e.g, png, jpeg, etc.)");
+        System.err.println("-p, --padding   : [0] the number of pixels to skip between images");
+        System.err.println();
+        System.err.println("Css Options");
+        System.err.println("-c, --css       : if flag is present, CSS will NOT be print");
+        System.err.println("-e, --prefix    : an optional prefix for the css class name");
+        System.err.println("-t, --postfix   : an optional postfix for the css class name");
+        System.err.println("-s, --separator : ['-'] the character used to separate prefix/postfix from classname ");
+        System.err.println("-a, --appendTo  : if specified, will append the css styles to this file, instead of creating a new one");
+        System.err.println("-x, --extra     : extra CSS style(s) to be added (should be a quoted string or valid CSS styles)");
+        System.err.println("-i, --inline    : use data URI scheme (as defined in RFC 2397) for inline images, instead of normal urls");
+        System.err.println("-P, --imgPrefix : an optional URL for the CSS background attribute that will prefix the output name (from the -o option)");
+        System.err.println("-U, --imgUrl    : an optional URL for the CSS background attribute (the -o and -x flags will be ignored if this is specified)");
+        System.err.println("-I, --important : if flag is present, '!important' flag will NOT be used for the background-position property");
+        System.err.println();
+        System.err.println("HTML Options");
+        System.err.println("-h, --html      : generate a sample html file for the sprite");
     }
 
     /**
@@ -100,7 +104,10 @@ public class SpriteMain {
             } else if (fls != null) {
                 request.setFilesByList(fls);
             } else {
-                throw new Exception("Either a directory or file list must be specified");
+                System.err.println("Either a directory or file list must be specified");
+                System.err.println();
+                printUsage();
+                System.exit(2);
             }
 
             request.setOutputType((String) parser.getOptionValue(format, "PNG"));
